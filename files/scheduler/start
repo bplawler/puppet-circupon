@@ -1,0 +1,4 @@
+#!/bin/sh
+
+CP=/usr/local/circupon/scheduler/dist/scheduler-assembly.jar
+java -classpath $CP -DdeploymentEnv=prod circupon.scheduler.Scheduler $@

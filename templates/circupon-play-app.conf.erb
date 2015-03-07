@@ -1,0 +1,16 @@
+start on (stopped circupon-play-<%= appName %>-deploy or runlevel [2345])
+
+stop on runlevel [!2345]
+
+respawn
+
+respawn limit 10 5
+
+script
+  cd /usr/local/circupon/<%= appName %>
+  if [ -x current/start ] 
+  then 
+    ./current/start -javaagent:/usr/local/circupon/<%= appName %>/newrelic/newrelic.jar -DdeploymentEnv=prod
+    #./current/start -DdeploymentEnv=prod
+  fi
+end script

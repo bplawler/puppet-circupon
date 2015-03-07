@@ -1,0 +1,32 @@
+start on stopped circupon-update
+
+script
+  (initctl status circupon-play-<%= appName %> | grep "start" 2>/dev/null) && 
+    stop circupon-play-<%= appName %>
+  cd /usr/local/circupon/<%= appName %>/deploy
+  rm -rf *
+
+  # Take the most recent zip file in this directory.  There should only be 
+  # one, but you can't be too careful!  If there are none, then we will 
+  # just do nothing.
+  for file in `ls -t ../dist/*.zip 2>/dev/null | head -1`
+  do
+    current=`basename $file | sed 's/.zip$//'`
+    unzip $file
+    echo "done unzipping"
+    if [ -h ../current ] 
+    then
+      rm ../current
+    fi
+    chmod +x $current/start
+    ln -s /usr/local/circupon/<%= appName %>/deploy/$current ../current
+  done
+
+  # put the zip (and any others that may be here) into the fallback dir.
+  cd /usr/local/circupon/<%= appName %>
+  if [ ! -d fallback ] 
+  then
+    mkdir fallback 
+  fi
+  mv dist/*.zip fallback
+end script

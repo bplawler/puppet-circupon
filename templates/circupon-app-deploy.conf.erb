@@ -1,0 +1,15 @@
+start on stopped circupon-update
+
+script
+  (initctl status circupon-<%= appName %> | grep "start" 2>/dev/null) && 
+    stop circupon-<%= appName %>
+
+  # put the zip (and any others that may be here) into the fallback dir.
+  cd /usr/local/circupon/<%= appName %>
+  if [ ! -d fallback ] 
+  then
+    mkdir fallback 
+  fi
+
+  tar cvf fallback/<%= appName %>-`date +%Y-%m-%d-%H-%M`.tar dist
+end script

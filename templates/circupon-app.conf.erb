@@ -1,0 +1,15 @@
+start on (stopped circupon-<%= appName %>-deploy or runlevel [2345])
+
+stop on runlevel [!2345]
+
+respawn 
+
+respawn limit 10 5
+
+
+script
+  export eth0=`ifconfig eth0 | grep "inet addr:" | sed 's/.*inet addr:\([^ ]*\).*/\1/g'`
+  export JAVA_OPTS="-Xmx<%= maxHeapSize %> -javaagent:/usr/local/circupon/<%= appName %>/newrelic/newrelic.jar -DdeploymentEnv=prod"
+  cd /usr/local/circupon/<%= appName %>/dist
+  ./bin/start circupon.akka.kernel.<%= appName %>
+end script

@@ -1,0 +1,8 @@
+#!/bin/bash
+BACKUP_FILE="dump.all.$(date +"%Y-%m-%d").tgz"
+cd $HOME
+rm -rf dump
+mongodump -d circupondb
+mongodump -d circuponlogs
+tar cvfz $BACKUP_FILE dump
+/usr/local/bin/s3-bash/s3-put -k 01TNN3G3CH17GM1D6Z82 -s ~/secret-key-bash -T $BACKUP_FILE /pirc-backup/$BACKUP_FILE
