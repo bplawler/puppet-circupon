@@ -8,9 +8,9 @@ respawn limit 10 5
 
 script
   cd /usr/local/circupon/<%= appName %>
-  if [ -x current/start ] 
+  if [ -x current/bin/<%= appName %> ] 
   then 
-    ./current/start -javaagent:/usr/local/circupon/<%= appName %>/newrelic/newrelic.jar -DdeploymentEnv=prod
-    #./current/start -DdeploymentEnv=prod
+    export JAVA_OPTS="-javaagent:/usr/local/circupon/<%= appName %>/newrelic/newrelic.jar -DdeploymentEnv=prod"
+    ./current/bin/<%= appName %> 
   fi
 end script

@@ -18,7 +18,7 @@ script
     then
       rm ../current
     fi
-    chmod +x $current/start
+    chmod +x $current/bin/<%= appName %>
     ln -s /usr/local/circupon/<%= appName %>/deploy/$current ../current
   done
 
