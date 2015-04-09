@@ -10,7 +10,7 @@ script
   cd /usr/local/circupon/<%= appName %>
   if [ -x current/bin/<%= appName %> ] 
   then 
-    export JAVA_OPTS="-javaagent:/usr/local/circupon/<%= appName %>/newrelic/newrelic.jar -DdeploymentEnv=prod"
+    export JAVA_OPTS="-javaagent:/usr/local/circupon/<%= appName %>/newrelic/newrelic.jar -DdeploymentEnv=<%= @deploymentEnv %>"
     ./current/bin/<%= appName %> 
   fi
 end script
