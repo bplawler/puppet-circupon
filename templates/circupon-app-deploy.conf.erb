@@ -12,4 +12,5 @@ script
   fi
 
   tar cvf fallback/<%= appName %>-`date +%Y-%m-%d-%H-%M`.tar dist
+  echo "finished deploying" > /home/ubuntu/status
 end script
