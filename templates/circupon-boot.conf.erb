@@ -7,7 +7,7 @@ script
 @@
 )
 
-  hostname spot-worker.internal.pirc.com
+  hostname <%= fqdn %>
   aws route53 change-resource-record-sets --hosted-zone-id ZNEX827OEXWWQ --change-batch "$CHANGE_BATCH"
 end script
 
