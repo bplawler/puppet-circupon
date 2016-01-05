@@ -3,7 +3,7 @@ start on runlevel [2345]
 script
   IP=$(ifconfig | grep "inet addr:" | grep -v "127.0.0.1" | awk '{print $2}' | cut -f2 -d:)
   CHANGE_BATCH=$(cat <<@@
-{ "Changes": [ { "Action": "UPSERT", "ResourceRecordSet": { "Name": "spot-worker.internal.pirc.com.", "Type": "A", "TTL": 300, "ResourceRecords": [ { "Value": "$IP" } ] } } ] }
+{ "Changes": [ { "Action": "UPSERT", "ResourceRecordSet": { "Name": "<%= fqdn %>.", "Type": "A", "TTL": 300, "ResourceRecords": [ { "Value": "$IP" } ] } } ] }
 @@
 )
 
