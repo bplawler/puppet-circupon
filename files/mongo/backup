@@ -1,8 +1,51 @@
-#!/bin/bash
-BACKUP_FILE="dump.all.$(date +"%Y-%m-%d").tgz"
+S3BUCKET="s3://pirc-backup"
+date --date=tomorrow +%m%d | grep "0101" > /dev/null
+YEARLY=$?
+date --date=tomorrow +%d | grep "01" > /dev/null
+MONTHLY=$?
+date +%a | grep "Sun" > /dev/null
+WEEKLY=$?
+
+if [ $(($MONTHLY + $WEEKLY)) = 2 ]
+then
+  DAILY=0
+else
+  DAILY=1
+fi
+
+DBNAME=circupondb
+BACKUP_FILE="dump.$DBNAME.$(date +"%Y-%m-%d").tgz"
 cd $HOME
 rm -rf dump
-mongodump -d circupondb
-mongodump -d circuponlogs
+mongodump -d $DBNAME
 tar cvfz $BACKUP_FILE dump
-/usr/local/bin/s3-bash/s3-put -k 01TNN3G3CH17GM1D6Z82 -s ~/secret-key-bash -T $BACKUP_FILE /pirc-backup/$BACKUP_FILE
+aws s3 mv $BACKUP_FILE $S3BUCKET
+
+if [ $YEARLY = 0 ]
+then
+  aws s3 mv $S3BUCKET/$BACKUP_FILE $S3BUCKET/$BACKUP_FILE.yearly
+
+elif [ $MONTHLY = 0 ] 
+then
+  aws s3 mv $S3BUCKET/$BACKUP_FILE $S3BUCKET/$BACKUP_FILE.monthly
+  for file in `aws s3 ls $S3BUCKET | grep monthly | awk '{print $NF}' | sort -r | awk 'NR>12 {print}'`
+  do
+    aws s3 rm $S3BUCKET/$file
+  done
+
+elif [ $WEEKLY = 0 ] 
+then
+  aws s3 mv $S3BUCKET/$BACKUP_FILE $S3BUCKET/$BACKUP_FILE.weekly
+  for file in `aws s3 ls $S3BUCKET | grep weekly | awk '{print $NF}' | sort -r | awk 'NR>4 {print}'`
+  do
+    aws s3 rm $S3BUCKET/$file
+  done
+
+else 
+  aws s3 mv $S3BUCKET/$BACKUP_FILE $S3BUCKET/$BACKUP_FILE.daily
+  for file in `aws s3 ls $S3BUCKET | grep daily | awk '{print $NF}' | sort -r | awk 'NR>7 {print}'`
+  do
+    aws s3 rm $S3BUCKET/$file
+  done
+
+fi

@@ -6,17 +6,9 @@ class circupon::backup {
     source => "puppet:///modules/circupon/mongo/backup",
   }
 
-  file { "s3-bash":
-    path => "/usr/local/bin/s3-bash",
-    source => "puppet:///modules/circupon/mongo/s3-bash-master",
-    owner => ubuntu,
-    group => root,
-    recurse => true,
-  }
-
   cron { backup:
-    command => "/usr/local/bin/backup",
-    user    => root,
+    command => "/usr/local/bin/backup > /tmp/backup.log 2>&1",
+    user    => ubuntu,
     hour    => 10,
     minute  => 5,
     ensure  => present,
