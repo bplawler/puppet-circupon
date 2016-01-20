@@ -8,6 +8,7 @@ class circupon::backup {
 
   cron { backup:
     command => "/usr/local/bin/backup > /tmp/backup.log 2>&1",
+    environment => "PATH=/bin:/usr/bin:/usr/sbin:/usr/local/bin",
     user    => ubuntu,
     hour    => 10,
     minute  => 5,
